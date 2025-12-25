@@ -1,0 +1,86 @@
+;; ----------------------------------------
+;; Level 2 — WalletConnect Tips + Analytics
+;; ----------------------------------------
+
+(define-data-var total-tipped uint u0)
+(define-data-var total-transactions uint u0)
+
+(define-map tips-by-recipient principal uint)
+(define-map tips-by-sender principal uint)
+(define-map tx-count-by-sender principal uint)
+
+;; Error codes
+(define-constant ERR_INVALID_AMOUNT u100)
+(define-constant ERR_TRANSFER_FAILED u101)
+
+;; Public: send STX tip
+(define-public (send-tip (recipient principal) (amount uint))
+  (begin
+    ;; Validate amount
+    (asserts! (> amount u0) (err ERR_INVALID_AMOUNT))
+
+    ;; Transfer STX
+    (asserts!
+      (is-ok (stx-transfer? amount tx-sender recipient))
+      (err ERR_TRANSFER_FAILED)
+    )
+
+    ;; Global stats
+    (var-set total-tipped (+ (var-get total-tipped) amount))
+    (var-set total-transactions (+ (var-get total-transactions) u1))
+
+    ;; Per-recipient stats
+    (map-set
+      tips-by-recipient
+      recipient
+      (+ amount (default-to u0 (map-get? tips-by-recipient recipient)))
+    )
+
+    ;; Per-sender stats
+    (map-set
+      tips-by-sender
+      tx-sender
+      (+ amount (default-to u0 (map-get? tips-by-sender tx-sender)))
+    )
+
+    (map-set
+      tx-count-by-sender
+      tx-sender
+      (+ u1 (default-to u0 (map-get? tx-count-by-sender tx-sender)))
+    )
+
+    ;; Emit event
+    (print {
+      event: "tip_sent",
+      from: tx-sender,
+      to: recipient,
+      amount: amount
+    })
+
+    (ok amount)
+  )
+)
+
+;; -------------------------
+;; Read-only analytics
+;; -------------------------
+
+(define-read-only (get-total-tipped)
+  (var-get total-tipped)
+)
+
+(define-read-only (get-total-transactions)
+  (var-get total-transactions)
+)
+
+(define-read-only (get-tips-sent-by (sender principal))
+  (default-to u0 (map-get? tips-by-sender sender))
+)
+
+(define-read-only (get-tips-received-by (recipient principal))
+  (default-to u0 (map-get? tips-by-recipient recipient))
+)
+
+(define-read-only (get-tx-count-by (sender principal))
+  (default-to u0 (map-get? tx-count-by-sender sender))
+)
