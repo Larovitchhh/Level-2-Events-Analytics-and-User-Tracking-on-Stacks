@@ -1,0 +1,13 @@
+Reading Events and Analytics
+
+Events can be consumed via:
+
+Hiro Explorer
+
+Custom indexers
+
+Backend scripts
+
+Analytics dashboards
+
+Each print emits structured JSON-like data, perfect for tracking adoption and usage.
