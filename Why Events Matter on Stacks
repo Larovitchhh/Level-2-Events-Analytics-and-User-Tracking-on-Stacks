@@ -1,0 +1,14 @@
+
+On Stacks, events are emitted using the print function.
+
+Why this matters:
+
+Indexable by explorers
+
+Readable by off-chain indexers
+
+Useful for dashboards & leaderboards
+
+Ideal for builder challenges and metrics
+
+Events turn contracts from black boxes into measurable systems.
