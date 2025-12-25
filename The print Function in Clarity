@@ -1,0 +1,14 @@
+3.
+In Clarity, print:
+
+Emits structured data
+
+Does not affect state
+
+Is cheap and deterministic
+
+Is visible in explorers like Hiro
+
+Important rule:
+
+print is for observation, not logic.
