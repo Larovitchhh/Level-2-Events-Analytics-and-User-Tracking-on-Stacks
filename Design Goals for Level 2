@@ -1,0 +1,13 @@
+
+
+We extend the Level 1 contract with:
+
+Per-sender tracking
+
+Event emission per interaction
+
+Global counters for analytics
+
+Read-only views for dashboards
+
+Still no advanced patterns yet — that’s Level 3+.
